@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 
 from project.domain.base_entity import BaseEntity
 
@@ -11,5 +10,5 @@ class Book(BaseEntity):
     title: str
     author: int
     is_borrowed: bool = False
-    borrowed_date: Optional[datetime] = None
-    borrowed_by: Optional[int] = None
+    borrowed_date: datetime | None = None
+    borrowed_by: int | None = None

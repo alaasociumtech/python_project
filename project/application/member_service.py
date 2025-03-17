@@ -24,14 +24,12 @@ class MemberService:
 
     def update_member(self, member_id: UUID, data: dict[str, Any]) -> Any:
         with UnitOfWork() as uow:
-            existing = self.member_repo.get_by_id(uow.connection, member_id, members.c.member_id)
-            if not existing:
+            if not (self.member_repo.get_by_id(uow.connection, member_id, members.c.member_id)):
                 raise ValueError(f'Member with ID {member_id} not found.')
             self.member_repo.update(uow.connection, member_id, data, members.c.member_id)
 
     def delete_member(self, member_id: UUID) -> Any:
         with UnitOfWork() as uow:
-            existing = self.member_repo.get_by_id(uow.connection, member_id, members.c.member_id)
-            if not existing:
+            if not (self.member_repo.get_by_id(uow.connection, member_id, members.c.member_id)):
                 raise ValueError(f'Member with ID {member_id} not found.')
             self.member_repo.delete(uow.connection, member_id, members.c.member_id)

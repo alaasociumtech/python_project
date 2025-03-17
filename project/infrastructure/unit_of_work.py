@@ -1,4 +1,4 @@
-from typing import Any, Optional, Type
+from typing import Any, Type
 
 from sqlalchemy import Result
 from sqlalchemy.engine import Connection, Transaction
@@ -8,17 +8,17 @@ from project.infrastructure.database.connection import engine
 
 class UnitOfWork:
     def __init__(self) -> None:
-        self._connection: Optional[Connection] = None
-        self._transaction: Optional[Transaction] = None
+        self._connection: Connection | None = None
+        self._transaction: Transaction | None = None
 
     def __enter__(self) -> 'UnitOfWork':
         self._connection = engine.connect()
         self._transaction = self._connection.begin()
         return self
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]],
-                 exc_value: Optional[BaseException],
-                 traceback: Optional[Any]) -> None:
+    def __exit__(self, exc_type: Type[BaseException] | None,
+                 exc_value: BaseException | None,
+                 traceback: Any | None) -> None:
         if not self._transaction or not self._connection:
             return
 

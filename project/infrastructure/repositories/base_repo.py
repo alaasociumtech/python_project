@@ -1,4 +1,4 @@
-from typing import Any, Generic, Optional, Type, TypeVar
+from typing import Any, Generic, Type, TypeVar
 
 from sqlalchemy import Table, delete, insert, select, update
 from sqlalchemy.engine import Connection
@@ -19,7 +19,7 @@ class BaseRepository(Generic[E]):
         rows = result.fetchall()
         return [self.entity(**(row._mapping)) for row in rows]
 
-    def get_by_id(self, connection: Connection, record_id: Any, id_column: Any) -> Optional[E]:
+    def get_by_id(self, connection: Connection, record_id: Any, id_column: Any) -> E | None:
         query = select(self.table).where(id_column == record_id)
         result = connection.execute(query)
         row = result.fetchone()

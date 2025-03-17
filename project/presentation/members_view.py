@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID
 
 from flask import jsonify, request
@@ -11,7 +11,7 @@ member_service = MemberService()
 
 class MemberAPI(MethodView):
 
-    def get(self, member_id: Optional[UUID] = None) -> Any:
+    def get(self, member_id: UUID | None = None) -> Any:
         if member_id is None:
             members = member_service.get_all_members()
             return jsonify([member.__dict__ for member in members])
@@ -22,14 +22,14 @@ class MemberAPI(MethodView):
             return jsonify(member.__dict__)
 
     def post(self) -> Any:
-        data: Optional[dict[str, Any]] = request.json
+        data: dict[str, Any] | None = request.json
         if data is None:
             return jsonify({'message': 'Invalid JSON payload'}), 400
         member_id = member_service.add_member(data)
         return jsonify({'message': 'Member added', 'member_id': member_id}), 201
 
-    def put(self, member_id: UUID) -> Any:
-        data: Optional[dict[str, Any]] = request.json
+    def patch(self, member_id: UUID) -> Any:
+        data: dict[str, Any] | None = request.json
         if data is None:
             return jsonify({'message': 'Invalid JSON payload'}), 400
         try:

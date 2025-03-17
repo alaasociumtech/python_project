@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID
 
 from flask import jsonify, request
@@ -11,7 +11,7 @@ book_service = BookService()
 
 class BookAPI(MethodView):
 
-    def get(self, book_id: Optional[int] = None) -> Any:
+    def get(self, book_id: int | None = None) -> Any:
         if book_id is None:
             books = book_service.get_all_books()
             return jsonify([vars(book) for book in books])
@@ -22,14 +22,14 @@ class BookAPI(MethodView):
             return jsonify(book.__dict__)
 
     def post(self) -> Any:
-        data: Optional[dict[str, Any]] = request.json
+        data: dict[str, Any] | None = request.json
         if data is None:
             return jsonify({'message': 'Invalid JSON payload'}), 400
         book_id = book_service.add_book(data)
         return jsonify({'message': 'Book added', 'book_id': book_id}), 201
 
-    def put(self, book_id: int) -> Any:
-        data: Optional[dict[str, Any]] = request.json
+    def patch(self, book_id: int) -> Any:
+        data: dict[str, Any] | None = request.json
         if data is None:
             return jsonify({'message': 'Invalid JSON payload'}), 400
         try:
@@ -64,3 +64,9 @@ class ReturnAPI(MethodView):
             return jsonify(returned_book.__dict__)
         except ValueError as e:
             return jsonify({'message': str(e)}), 400
+
+
+class BooksWithMembersAPI(MethodView):
+    def get(self) -> Any:
+        books_with_members = book_service.get_books_with_members()
+        return jsonify([dict(row._mapping) for row in books_with_members])
